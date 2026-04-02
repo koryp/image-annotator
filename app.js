@@ -233,6 +233,14 @@ function closeModal() {
   projectsModal.classList.remove('show');
 }
 
+function setActiveAnnotation(annId) {
+  activePinId = annId;
+  renderPins();
+  annotationList.querySelectorAll('.annotation-item').forEach((item) => {
+    item.classList.toggle('active', item.dataset.id === annId);
+  });
+}
+
 function renderPins() {
   pinsLayer.innerHTML = '';
   annotations.forEach((ann) => {
@@ -245,14 +253,16 @@ function renderPins() {
     el.title = ann.note || 'Click to edit note';
     el.addEventListener('click', (event) => {
       event.stopPropagation();
-      activePinId = ann.id;
-      render();
+      setActiveAnnotation(ann.id);
+    });
+    el.addEventListener('focus', () => {
+      setActiveAnnotation(ann.id);
     });
     el.addEventListener('pointerdown', (event) => {
       event.stopPropagation();
       event.preventDefault();
       dragState = { id: ann.id, annotation: ann };
-      activePinId = ann.id;
+      setActiveAnnotation(ann.id);
       // capture pointer for drag events
       el.setPointerCapture(event.pointerId);
     });
@@ -291,11 +301,9 @@ function renderAnnotations() {
   annotations.forEach((ann) => {
     const item = document.createElement('li');
     item.className = `annotation-item${activePinId === ann.id ? ' active' : ''}`;
+    item.dataset.id = ann.id;
     item.addEventListener('click', () => {
-      activePinId = ann.id;
-      annotationList.querySelectorAll('.annotation-item').forEach((it) => it.classList.remove('active'));
-      item.classList.add('active');
-      renderPins();
+      setActiveAnnotation(ann.id);
     });
 
     const content = document.createElement('div');
@@ -304,6 +312,9 @@ function renderAnnotations() {
     const textarea = document.createElement('textarea');
     textarea.value = ann.note || '';
     textarea.placeholder = 'Annotation text...';
+    textarea.addEventListener('focus', () => {
+      setActiveAnnotation(ann.id);
+    });
     textarea.addEventListener('input', (e) => {
       ann.note = e.target.value;
       renderPins();
@@ -327,6 +338,9 @@ function renderAnnotations() {
     xInput.step = 0.1;
     xInput.value = ann.x.toFixed(1);
     xInput.title = 'X coordinate (percent)';
+    xInput.addEventListener('focus', () => {
+      setActiveAnnotation(ann.id);
+    });
     xInput.addEventListener('change', (e) => {
       ann.x = Math.min(100, Math.max(0, Number(e.target.value) || 0));
       markUnsaved();
@@ -343,6 +357,9 @@ function renderAnnotations() {
     yInput.step = 0.1;
     yInput.value = ann.y.toFixed(1);
     yInput.title = 'Y coordinate (percent)';
+    yInput.addEventListener('focus', () => {
+      setActiveAnnotation(ann.id);
+    });
     yInput.addEventListener('change', (e) => {
       ann.y = Math.min(100, Math.max(0, Number(e.target.value) || 0));
       markUnsaved();
