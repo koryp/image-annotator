@@ -155,9 +155,7 @@ function saveProject(name) {
 function loadProject(querystring) {
   window.history.pushState({}, '', `${window.location.pathname}${querystring}`);
   parseQuery();
-  if (imageUrlInput.value.trim()) {
-    loadImage();
-  }
+  loadImage();
   render();
   updateLargeUrlBadge(window.location.href);
   closeModal();
@@ -420,10 +418,9 @@ function showToast(message) {
 }
 
 function loadImage() {
-  const url = imageUrlInput.value.trim();
+  let url = imageUrlInput.value.trim();
   if (!url) {
-    showToast('Image URL is required.');
-    return;
+    url = defaultLogoDataUrl;
   }
 
   baseImage.src = url;
@@ -466,9 +463,12 @@ function initialize() {
   });
 
   imageUrlInput.addEventListener('change', () => {
-    if (imageUrlInput.value.trim()) {
-      loadImage();
+    const url = imageUrlInput.value.trim();
+    if (!url) {
+      showToast('Image URL is required.');
+      return;
     }
+    loadImage();
   });
 
   newProjectBtn.addEventListener('click', async () => {
@@ -479,6 +479,7 @@ function initialize() {
     annotations = [];
     activePinId = null;
     baseImage.src = defaultLogoDataUrl;
+    imageUrlInput.value = '';
     render();
     updateLargeUrlBadge(link);
   });
