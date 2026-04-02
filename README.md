@@ -47,6 +47,15 @@ The app parses two primary parameters:
 * **CORS Aware:** Images are rendered via standard `<img>` tags.
 * **Open Source:** Review the code, fork it, or host your own version on GitHub Pages.
 
+## 🛠 Future Enhancements
+1. Annotation types:
+    1. rectangle (x1,y1 and x2,y2)
+    2. point scale (in lieu of circles)
+    3. arrows (also x1,y1 and x2,y2)
+    4. text (displays annotation at x,y)
+2. set color for annotation type (or also built-in icon options for point type?)
+3. zoom-in and -out of image
+
 ## 🛠 Local Development
 1. Clone the repo:
    `git clone https://github.com/koryp/image-annotator.git`
