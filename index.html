@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>image-annotator</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app">
+    <header>
+      <h1>image-annotator</h1>
+      <p>Paste an image URL, click to drop pins, add notes, and share the URL.</p>
+    </header>
+
+    <section class="controls">
+      <label for="imageUrl">Image URL</label>
+      <input id="imageUrl" type="url" placeholder="https://example.com/image.png" />
+      <button id="loadImage">Load Image</button>
+      <button id="copyLink">Copy Link</button>
+      <span id="saveState" class="badge">Synced</span>
+    </section>
+
+    <section class="layout">
+      <article class="image-pane">
+        <div id="imageContainer" class="image-container">
+          <img id="baseImage" alt="Annotated image" />
+          <div id="pins" class="pins"></div>
+        </div>
+      </article>
+
+      <aside class="sidebar">
+        <h2>Annotations</h2>
+        <ul id="annotationList"></ul>
+        <button id="clearAll" class="danger">Clear all</button>
+      </aside>
+    </section>
+
+    <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
