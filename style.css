@@ -40,14 +40,24 @@ header p {
 
 .controls {
   display: grid;
-  grid-template-columns: 2.5fr 1fr 1fr 1fr;
-  gap: 0.5rem;
+  grid-template-columns: 2fr 1fr;
+  gap: 0.5rem 1rem;
   align-items: center;
   margin-bottom: 1rem;
 }
 
-.controls input,
-.controls button {
+.image-url-input {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.image-url-input label {
+  white-space: nowrap;
+}
+
+.image-url-input input {
   font: inherit;
   height: 2.6rem;
   border: 1px solid var(--border);
@@ -57,9 +67,21 @@ header p {
   padding: 0 0.75rem;
 }
 
+.other-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
 .controls button {
-  cursor: pointer;
+  font: inherit;
+  height: 2.6rem;
+  border: 1px solid var(--border);
   background: var(--accent);
+  color: var(--text);
+  border-radius: 0.5rem;
+  padding: 0 0.75rem;
+  cursor: pointer;
   border-color: transparent;
 }
 
@@ -86,6 +108,10 @@ header p {
   border-radius: 0.75rem;
   background: var(--panel-alt);
   padding: 0.75rem;
+}
+
+.sidebar {
+  padding: 0.75rem 0 0.75rem 0.75rem;
 }
 
 .image-container {
@@ -172,10 +198,31 @@ header p {
 
 #annotationList {
   list-style: none;
-  padding: 0;
+  padding: 0 0.75rem 0 0;
   margin: 0;
   max-height: calc(80vh - 5rem);
   overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(37, 99, 235, 0.75) rgba(30, 41, 59, 0.3);
+}
+
+#annotationList::-webkit-scrollbar {
+  width: 8px;
+}
+
+#annotationList::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.9);
+  border-radius: 999px;
+}
+
+#annotationList::-webkit-scrollbar-thumb {
+  background: rgba(37, 99, 235, 0.75);
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.75);
+}
+
+#annotationList::-webkit-scrollbar-thumb:hover {
+  background: rgba(37, 99, 235, 0.95);
 }
 
 .annotation-item {

@@ -1,5 +1,4 @@
 const imageUrlInput = document.getElementById('imageUrl');
-const loadImageBtn = document.getElementById('loadImage');
 const copyLinkBtn = document.getElementById('copyLink');
 const saveStateMarker = document.getElementById('saveState');
 const baseImage = document.getElementById('baseImage');
@@ -89,6 +88,10 @@ function renderAnnotations() {
   annotations.forEach((ann) => {
     const item = document.createElement('li');
     item.className = `annotation-item${activePinId === ann.id ? ' active' : ''}`;
+    item.addEventListener('click', () => {
+      activePinId = ann.id;
+      render();
+    });
 
     const content = document.createElement('div');
     content.className = 'content';
@@ -220,18 +223,23 @@ function initialize() {
     if (!rect.width || !rect.height) return;
 
     const { x, y } = getPointFromEvent(event);
-    const note = prompt('Annotation note:', '');
-    if (note === null) return;
-
-    const annotation = { id: `a${Date.now()}-${Math.random().toString(16).slice(2)}`, x, y, note: note.trim() };
-    annotations.push(annotation);
+    const annotation = { id: `a${Date.now()}-${Math.random().toString(16).slice(2)}`, x, y, note: '' };
+    annotations.unshift(annotation);
     activePinId = annotation.id;
     render();
     markUnsaved();
+    
+    // Focus the textarea of the newly created annotation
+    window.requestAnimationFrame(() => {
+      const textarea = annotationList.querySelector('textarea');
+      if (textarea) textarea.focus();
+    });
   });
 
-  loadImageBtn.addEventListener('click', () => {
-    loadImage();
+  imageUrlInput.addEventListener('blur', () => {
+    if (imageUrlInput.value.trim()) {
+      loadImage();
+    }
   });
 
   copyLinkBtn.addEventListener('click', async () => {

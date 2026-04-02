@@ -15,10 +15,13 @@
     </header>
 
     <section class="controls">
-      <label for="imageUrl">Image URL</label>
-      <input id="imageUrl" type="url" placeholder="https://example.com/image.png" />
-      <button id="loadImage">Load Image</button>
-      <button id="copyLink">Copy Link</button>
+      <div class="image-url-input">
+        <label for="imageUrl">Image URL</label>
+        <input id="imageUrl" type="url" placeholder="https://example.com/image.png" />
+      </div>
+      <div class="other-controls">
+        <button id="copyLink">Copy Link</button>
+      </div>
       <span id="saveState" class="badge">Synced</span>
     </section>
 
