@@ -277,7 +277,7 @@ header p {
   resize: vertical;
 }
 
-.annotation-item button {
+.btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -291,7 +291,8 @@ header p {
 
 .danger {
   background: var(--danger);
-  border-color: transparent;
+  color: var(--bg);
+  border-color: var(--bg);
 }
 
 .toast {

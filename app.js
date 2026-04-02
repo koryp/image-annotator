@@ -90,7 +90,9 @@ function renderAnnotations() {
     item.className = `annotation-item${activePinId === ann.id ? ' active' : ''}`;
     item.addEventListener('click', () => {
       activePinId = ann.id;
-      render();
+      annotationList.querySelectorAll('.annotation-item').forEach((it) => it.classList.remove('active'));
+      item.classList.add('active');
+      renderPins();
     });
 
     const content = document.createElement('div');
@@ -101,6 +103,9 @@ function renderAnnotations() {
     textarea.placeholder = 'Annotation text...';
     textarea.addEventListener('input', (e) => {
       ann.note = e.target.value;
+      renderPins();
+    });
+    textarea.addEventListener('blur', () => {
       markUnsaved();
       renderPins();
     });
@@ -150,6 +155,7 @@ function renderAnnotations() {
 
     const remove = document.createElement('button');
     remove.textContent = 'Delete';
+    remove.className = 'btn';
     remove.addEventListener('click', () => {
       annotations = annotations.filter((n) => n.id !== ann.id);
       if (activePinId === ann.id) activePinId = null;
