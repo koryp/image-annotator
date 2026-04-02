@@ -107,6 +107,7 @@ header p {
   position: absolute;
   left: 0;
   top: 100%;
+  width: 300px;
   margin-top: 0.25rem;
   background: rgba(17, 24, 39, 0.95);
   color: var(--text);
@@ -114,7 +115,6 @@ header p {
   border: 1px solid var(--border);
   border-radius: 0.35rem;
   pointer-events: none;
-  white-space: nowrap;
   opacity: 0;
   transition: opacity 0.15s ease;
   z-index: 20;
