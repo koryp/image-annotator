@@ -1,4 +1,5 @@
 const imageUrlInput = document.getElementById('imageUrl');
+const newProjectBtn = document.getElementById('newProject');
 const copyLinkBtn = document.getElementById('copyLink');
 const saveStateMarker = document.getElementById('saveState');
 const largeUrlBadge = document.getElementById('largeUrl');
@@ -468,6 +469,18 @@ function initialize() {
     if (imageUrlInput.value.trim()) {
       loadImage();
     }
+  });
+
+  newProjectBtn.addEventListener('click', async () => {
+    const proceed = confirm('This will replace the active project. Copy the shareable link or save the project to prevent losing any work. Proceed with new project?');
+    if (!proceed) return;
+    const link = `${window.location.origin}${window.location.pathname}`;
+    window.history.pushState({}, '', link);
+    annotations = [];
+    activePinId = null;
+    baseImage.src = defaultLogoDataUrl;
+    render();
+    updateLargeUrlBadge(link);
   });
 
   copyLinkBtn.addEventListener('click', async () => {
