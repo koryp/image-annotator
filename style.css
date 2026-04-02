@@ -189,6 +189,7 @@ header p {
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
   cursor: grab;
   pointer-events: auto;
+  opacity: 0.75;
 }
 
 .pin:active {

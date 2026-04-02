@@ -152,6 +152,9 @@ function saveProject(name) {
 function loadProject(querystring) {
   window.history.pushState({}, '', `${window.location.pathname}${querystring}`);
   parseQuery();
+  if (imageUrlInput.value.trim()) {
+    loadImage();
+  }
   render();
   updateLargeUrlBadge(window.location.href);
   closeModal();
