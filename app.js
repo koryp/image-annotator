@@ -22,20 +22,49 @@ function parseQuery() {
 
   if (!d) return;
 
-  try {
-    const decoded = atob(d);
-    const parsed = JSON.parse(decoded);
-    if (Array.isArray(parsed)) {
-      annotations = parsed.map((it, idx) => ({ ...it, id: `a${idx}-${Date.now()}` }));
+  let parsed = null;
+
+  // Try LZ-String decompression first (preferred)
+  if (typeof LZString !== 'undefined') {
+    try {
+      const decompressed = LZString.decompressFromEncodedURIComponent(d);
+      if (decompressed) {
+        parsed = JSON.parse(decompressed);
+      }
+    } catch (e) {
+      console.info('LZ compression decode failed; falling back to base64.', e);
     }
-  } catch (e) {
-    console.warn('Unable to parse annotation data', e);
+  }
+
+  // Fallback to base64 JSON for legacy links or if LZ fails
+  if (!parsed) {
+    try {
+      const decoded = atob(d);
+      parsed = JSON.parse(decoded);
+    } catch (e) {
+      console.warn('Unable to parse annotation data', e);
+    }
+  }
+
+  if (Array.isArray(parsed)) {
+    annotations = parsed.map((it, idx) => ({ ...it, id: `a${idx}-${Date.now()}` }));
   }
 }
 
 function buildQuery() {
   const i = encodeURIComponent(imageUrlInput.value.trim());
-  const d = btoa(JSON.stringify(annotations.map(({ x, y, note }) => ({ x, y, note }))));
+  const payload = JSON.stringify(annotations.map(({ x, y, note }) => ({ x, y, note })));
+
+  let d;
+  if (typeof LZString !== 'undefined') {
+    d = LZString.compressToEncodedURIComponent(payload);
+  }
+
+  // If LZString isn't available or compression fails, fallback to base64
+  if (!d) {
+    d = btoa(payload);
+  }
+
   const q = new URLSearchParams();
   if (i) q.set('i', i);
   if (annotations.length) q.set('d', d);
