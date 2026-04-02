@@ -105,7 +105,7 @@ function renderAnnotations() {
       ann.note = e.target.value;
       renderPins();
     });
-    textarea.addEventListener('blur', () => {
+    textarea.addEventListener('change', () => {
       markUnsaved();
       renderPins();
     });
@@ -242,7 +242,7 @@ function initialize() {
     });
   });
 
-  imageUrlInput.addEventListener('blur', () => {
+  imageUrlInput.addEventListener('change', () => {
     if (imageUrlInput.value.trim()) {
       loadImage();
     }
