@@ -11,6 +11,7 @@
     <header>
       <h1>image-annotator</h1>
       <p>Paste an image URL, click to drop pins, add notes, and share the URL.</p>
+      <p style="color: #fef3c7;">Note: This app doesn’t host images. If an image link is malicious or unavailable, the behavior is determined by the link source and your browser security settings.</p>
     </header>
 
     <section class="controls">
@@ -24,8 +25,10 @@
     <section class="layout">
       <article class="image-pane">
         <div id="imageContainer" class="image-container">
-          <img id="baseImage" alt="Annotated image" />
-          <div id="pins" class="pins"></div>
+          <div class="image-wrapper">
+            <img id="baseImage" alt="Annotated image" />
+            <div id="pins" class="pins"></div>
+          </div>
         </div>
       </article>
 

@@ -68,6 +68,7 @@ function renderPins() {
     el.style.left = `${ann.x}%`;
     el.style.top = `${ann.y}%`;
     el.dataset.id = ann.id;
+    el.dataset.tooltip = ann.note || 'Pin annotation';
     el.title = ann.note || 'Click to edit note';
     el.addEventListener('click', (event) => {
       event.stopPropagation();
@@ -85,22 +86,64 @@ function renderAnnotations() {
     return;
   }
 
-  annotations.forEach((ann, index) => {
+  annotations.forEach((ann) => {
     const item = document.createElement('li');
-    item.className = 'annotation-item';
+    item.className = `annotation-item${activePinId === ann.id ? ' active' : ''}`;
 
     const content = document.createElement('div');
     content.className = 'content';
-    content.innerHTML = `<strong>#${index + 1}</strong> (${ann.x.toFixed(1)}%, ${ann.y.toFixed(1)}%)`;
 
     const textarea = document.createElement('textarea');
     textarea.value = ann.note || '';
+    textarea.placeholder = 'Annotation text...';
     textarea.addEventListener('input', (e) => {
       ann.note = e.target.value;
       markUnsaved();
       renderPins();
     });
     content.appendChild(textarea);
+
+    const coordRow = document.createElement('div');
+    coordRow.className = 'coord-row';
+
+    const xLabel = document.createElement('label');
+    xLabel.textContent = 'X';
+
+    const xInput = document.createElement('input');
+    xInput.type = 'number';
+    xInput.min = 0;
+    xInput.max = 100;
+    xInput.step = 0.1;
+    xInput.value = ann.x.toFixed(1);
+    xInput.title = 'X coordinate (percent)';
+    xInput.addEventListener('change', (e) => {
+      ann.x = Math.min(100, Math.max(0, Number(e.target.value) || 0));
+      markUnsaved();
+      render();
+    });
+
+    const yLabel = document.createElement('label');
+    yLabel.textContent = 'Y';
+
+    const yInput = document.createElement('input');
+    yInput.type = 'number';
+    yInput.min = 0;
+    yInput.max = 100;
+    yInput.step = 0.1;
+    yInput.value = ann.y.toFixed(1);
+    yInput.title = 'Y coordinate (percent)';
+    yInput.addEventListener('change', (e) => {
+      ann.y = Math.min(100, Math.max(0, Number(e.target.value) || 0));
+      markUnsaved();
+      render();
+    });
+
+    coordRow.appendChild(xLabel);
+    coordRow.appendChild(xInput);
+    coordRow.appendChild(yLabel);
+    coordRow.appendChild(yInput);
+
+    content.appendChild(coordRow);
 
     const remove = document.createElement('button');
     remove.textContent = 'Delete';
