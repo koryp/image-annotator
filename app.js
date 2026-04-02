@@ -154,6 +154,7 @@ function saveProject(name) {
 
 function loadProject(querystring) {
   window.history.pushState({}, '', `${window.location.pathname}${querystring}`);
+  imageUrlInput.value = '';
   parseQuery();
   loadImage();
   render();
