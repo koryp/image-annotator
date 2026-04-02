@@ -21,6 +21,7 @@
       </div>
       <div class="other-controls">
         <button id="copyLink">Copy Link</button>
+        <button id="projectsBtn">Projects</button>
       </div>
       <div class="messages">
         <span id="saveState" class="badge">Synced</span>
@@ -46,6 +47,30 @@
     </section>
 
     <div id="toast" class="toast" aria-live="polite" aria-atomic="true"></div>
+
+    <div id="projectsModal" class="modal-overlay">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2>Projects</h2>
+          <button id="closeModal" class="modal-close">&times;</button>
+        </div>
+        
+        <div class="modal-body">
+          <div class="modal-section">
+            <h3>Save Current Project</h3>
+            <div class="modal-form">
+              <input id="projectName" type="text" placeholder="Project name" />
+              <button id="saveProjectBtn" class="btn">Save</button>
+            </div>
+          </div>
+
+          <div class="modal-section">
+            <h3>Load or Delete Project</h3>
+            <ul id="projectList" class="project-list"></ul>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <script src="https://cdn.jsdelivr.net/npm/lz-string@1.4.4/libs/lz-string.min.js"></script>

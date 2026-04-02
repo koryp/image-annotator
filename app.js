@@ -8,6 +8,12 @@ const pinsLayer = document.getElementById('pins');
 const annotationList = document.getElementById('annotationList');
 const clearAllBtn = document.getElementById('clearAll');
 const toast = document.getElementById('toast');
+const projectsBtn = document.getElementById('projectsBtn');
+const projectsModal = document.getElementById('projectsModal');
+const closeModalBtn = document.getElementById('closeModal');
+const projectNameInput = document.getElementById('projectName');
+const saveProjectBtn = document.getElementById('saveProjectBtn');
+const projectList = document.getElementById('projectList');
 
 let annotations = [];
 let hasUnsaved = false;
@@ -108,6 +114,118 @@ function pointToPercent(clientX, clientY) {
 
 function getPointFromEvent(e) {
   return pointToPercent(e.clientX, e.clientY);
+}
+
+function getProjectsFromStorage() {
+  try {
+    const projects = localStorage.getItem('imageAnnotatorProjects');
+    return projects ? JSON.parse(projects) : [];
+  } catch (e) {
+    console.warn('Failed to read projects from localStorage', e);
+    return [];
+  }
+}
+
+function saveProjectsToStorage(projects) {
+  try {
+    localStorage.setItem('imageAnnotatorProjects', JSON.stringify(projects));
+  } catch (e) {
+    console.warn('Failed to save projects to localStorage', e);
+    showToast('Failed to save project (storage full?)');
+  }
+}
+
+function saveProject(name) {
+  if (!name.trim()) {
+    showToast('Project name cannot be empty.');
+    return;
+  }
+  const querystring = buildQuery();
+  const projects = getProjectsFromStorage();
+  projects.unshift({ name: name.trim(), querystring, timestamp: Date.now() });
+  saveProjectsToStorage(projects);
+  projectNameInput.value = '';
+  renderProjectList();
+  showToast(`Project "${name.trim()}" saved.`);
+}
+
+function loadProject(querystring) {
+  window.history.pushState({}, '', `${window.location.pathname}${querystring}`);
+  parseQuery();
+  render();
+  updateLargeUrlBadge(window.location.href);
+  closeModal();
+  showToast('Project loaded.');
+}
+
+function deleteProject(timestamp) {
+  const projects = getProjectsFromStorage();
+  const filtered = projects.filter((p) => p.timestamp !== timestamp);
+  saveProjectsToStorage(filtered);
+  renderProjectList();
+  showToast('Project deleted.');
+}
+
+function renderProjectList() {
+  const projects = getProjectsFromStorage();
+  projectList.innerHTML = '';
+  if (!projects.length) {
+    projectList.innerHTML = '<li class="project-item"><div class="project-info">No saved projects yet.</div></li>';
+    return;
+  }
+  projects.forEach((project) => {
+    const item = document.createElement('li');
+    item.className = 'project-item';
+    
+    const info = document.createElement('div');
+    info.className = 'project-info';
+    
+    const name = document.createElement('div');
+    name.className = 'project-name';
+    name.textContent = project.name;
+    
+    const date = document.createElement('div');
+    date.className = 'project-date';
+    date.textContent = new Date(project.timestamp).toLocaleDateString() + ' ' + new Date(project.timestamp).toLocaleTimeString();
+    
+    info.appendChild(name);
+    info.appendChild(date);
+    
+    const actions = document.createElement('div');
+    actions.className = 'project-actions';
+    
+    const loadBtn = document.createElement('button');
+    loadBtn.textContent = 'Load';
+    loadBtn.className = 'btn';
+    loadBtn.addEventListener('click', () => {
+      loadProject(project.querystring);
+    });
+    
+    const deleteBtn = document.createElement('button');
+    deleteBtn.textContent = 'Delete';
+    deleteBtn.className = 'btn danger';
+    deleteBtn.addEventListener('click', () => {
+      if (confirm(`Delete "${project.name}"?`)) {
+        deleteProject(project.timestamp);
+      }
+    });
+    
+    actions.appendChild(loadBtn);
+    actions.appendChild(deleteBtn);
+    
+    item.appendChild(info);
+    item.appendChild(actions);
+    projectList.appendChild(item);
+  });
+}
+
+function openModal() {
+  projectsModal.classList.add('show');
+  renderProjectList();
+}
+
+function closeModal() {
+  projectsModal.classList.remove('show');
 }
 
 function renderPins() {
@@ -335,6 +453,30 @@ function initialize() {
       showToast('Link copied to clipboard.');
     } catch (err) {
       showToast('Copy failed. Please copy manually from URL bar.');
+    }
+  });
+
+  projectsBtn.addEventListener('click', () => {
+    openModal();
+  });
+
+  closeModalBtn.addEventListener('click', () => {
+    closeModal();
+  });
+
+  projectNameInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      saveProject(projectNameInput.value);
+    }
+  });
+
+  saveProjectBtn.addEventListener('click', () => {
+    saveProject(projectNameInput.value);
+  });
+
+  projectsModal.addEventListener('click', (e) => {
+    if (e.target === projectsModal) {
+      closeModal();
     }
   });
 
