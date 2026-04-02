@@ -1,6 +1,7 @@
 const imageUrlInput = document.getElementById('imageUrl');
 const copyLinkBtn = document.getElementById('copyLink');
 const saveStateMarker = document.getElementById('saveState');
+const largeUrlBadge = document.getElementById('largeUrl');
 const baseImage = document.getElementById('baseImage');
 const imageContainer = document.getElementById('imageContainer');
 const pinsLayer = document.getElementById('pins');
@@ -72,11 +73,27 @@ function buildQuery() {
   return `?${q.toString()}`;
 }
 
+function updateLargeUrlBadge(url) {
+  const length = url.length;
+  if (length > 2000) {
+    largeUrlBadge.innerHTML = `${length} chars`;
+    largeUrlBadge.style.display = 'inline-block';
+    if (length > 32000) {
+      largeUrlBadge.style.backgroundColor = 'var(--danger)';
+    } else {
+      largeUrlBadge.style.backgroundColor = 'var(--warning)';
+    }
+  } else {
+    largeUrlBadge.style.display = 'none';
+  }
+}
+
 function pushState() {
   const url = `${window.location.protocol}//${window.location.host}${window.location.pathname}${buildQuery()}`;
   window.history.replaceState({}, '', url);
   hasUnsaved = false;
   renderSaveState();
+  updateLargeUrlBadge(url);
 }
 
 function pointToPercent(clientX, clientY) {
@@ -332,12 +349,14 @@ function initialize() {
   window.addEventListener('popstate', () => {
     parseQuery();
     render();
+    updateLargeUrlBadge(window.location.href);
   });
 
   window.addEventListener('pointermove', onGlobalPointerMove);
   window.addEventListener('pointerup', onGlobalPointerUp);
   window.addEventListener('pointercancel', onGlobalPointerUp);
 
+  updateLargeUrlBadge(window.location.href);
   render();
 }
 
