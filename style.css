@@ -160,8 +160,12 @@ header p {
   background: var(--accent);
   border: 2px solid white;
   box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.2);
-  cursor: pointer;
+  cursor: grab;
   pointer-events: auto;
+}
+
+.pin:active {
+  cursor: grabbing;
 }
 
 .pin::after {

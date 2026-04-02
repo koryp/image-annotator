@@ -12,6 +12,7 @@ let annotations = [];
 let hasUnsaved = false;
 let activePinId = null;
 let pendingUpdate = null;
+let dragState = null; // { id, annotation }
 
 function parseQuery() {
   const query = new URLSearchParams(window.location.search);
@@ -78,14 +79,18 @@ function pushState() {
   renderSaveState();
 }
 
-function getPointFromEvent(e) {
+function pointToPercent(clientX, clientY) {
   const rect = baseImage.getBoundingClientRect();
-  const x = ((e.clientX - rect.left) / rect.width) * 100;
-  const y = ((e.clientY - rect.top) / rect.height) * 100;
+  const x = ((clientX - rect.left) / rect.width) * 100;
+  const y = ((clientY - rect.top) / rect.height) * 100;
   return {
     x: Math.min(100, Math.max(0, x)),
     y: Math.min(100, Math.max(0, y)),
   };
+}
+
+function getPointFromEvent(e) {
+  return pointToPercent(e.clientX, e.clientY);
 }
 
 function renderPins() {
@@ -103,9 +108,38 @@ function renderPins() {
       activePinId = ann.id;
       render();
     });
+    el.addEventListener('pointerdown', (event) => {
+      event.stopPropagation();
+      event.preventDefault();
+      dragState = { id: ann.id, annotation: ann };
+      activePinId = ann.id;
+      // capture pointer for drag events
+      el.setPointerCapture(event.pointerId);
+    });
     pinsLayer.appendChild(el);
   });
 }
+
+function getAnnotationById(id) {
+  return annotations.find((ann) => ann.id === id);
+}
+
+function onGlobalPointerMove(event) {
+  if (!dragState) return;
+  const coords = pointToPercent(event.clientX, event.clientY);
+  dragState.annotation.x = coords.x;
+  dragState.annotation.y = coords.y;
+  activePinId = dragState.id;
+  renderPins();
+  renderAnnotations();
+}
+
+function onGlobalPointerUp() {
+  if (!dragState) return;
+  dragState = null;
+  markUnsaved();
+}
+
 
 function renderAnnotations() {
   annotationList.innerHTML = '';
@@ -299,6 +333,10 @@ function initialize() {
     parseQuery();
     render();
   });
+
+  window.addEventListener('pointermove', onGlobalPointerMove);
+  window.addEventListener('pointerup', onGlobalPointerUp);
+  window.addEventListener('pointercancel', onGlobalPointerUp);
 
   render();
 }
