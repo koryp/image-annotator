@@ -21,6 +21,8 @@ let activePinId = null;
 let pendingUpdate = null;
 let dragState = null; // { id, annotation }
 
+const defaultLogoDataUrl = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIzNjAiIGhlaWdodD0iODAiPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9IiMwZjE3MmEiLz48dGV4dCB4PSI1MCUiIHk9IjU1JSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZm9udC1mYW1pbHk9IkludGVyLHN5c3RlbS11aSxzYW5zLXNlcmlmIiBmb250LXNpemU9IjE4IiBmaWxsPSIjZTVlN2ViIj5pbWFnZS1hbm5vdGF0b3I8L3RleHQ+PC9zdmc+';
+
 function parseQuery() {
   const query = new URLSearchParams(window.location.search);
   const i = query.get('i');
@@ -419,6 +421,8 @@ function loadImage() {
 }
 
 function initialize() {
+  baseImage.src = defaultLogoDataUrl;
+
   parseQuery();
 
   if (imageUrlInput.value.trim()) {
